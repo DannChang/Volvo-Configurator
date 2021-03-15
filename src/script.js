@@ -4,9 +4,58 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
+import { Raycaster } from 'three'
 
-// import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
+/**
+ * Loaders
+ */
+let sceneIsReady = false
+const loadingBarElement = document.querySelector('.loading-bar')
+const loadingManager = new THREE.LoadingManager(
+    // On finish loading object
+    () => {
+        window.setTimeout(() => {
+            // set overlay shader from opaque to transparent
+            gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0 })
 
+            // css transitions to fade in
+            loadingBarElement.classList.add('ended')
+            loadingBarElement.style.transform = ''
+        }, 500)
+
+        window.setTimeout(()=> {
+            sceneIsReady = true
+        }, 3500)
+    },
+    // Progress of object
+    (itemsUrl, itemsLoaded, itemsTotal) => {
+        // console.log(itemsLoaded)
+        // console.log(itemsTotal)
+        const progressRatio = itemsLoaded / itemsTotal;
+        loadingBarElement.style.transform = `scaleX(${progressRatio})`
+        
+    }
+)
+
+
+/**
+ * Model Loader
+ */
+const gltfLoader = new GLTFLoader(loadingManager)
+const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager)
+
+let mixer = null
+gltfLoader.load(
+    '/models/Volvo/glTF/scene.gltf',
+    (gltf) => {
+        console.log(gltf.scenes[0])
+        gltf.scenes[0].scale.set(0.25, 0.25, 0.25)
+        gltf.scenes[0].position.set(0, -0.17, 0)
+        scene.add(gltf.scenes[0])
+
+        updateAllMaterials()
+    }
+)
 
 /**
  * Base
@@ -20,123 +69,73 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-/**
- * Loaders
- */
-const loadingBarElement = document.querySelector('.loading-bar')
-
-const loadingManager = new THREE.LoadingManager(
-    // On finish loading object
-    () => {
-        window.setTimeout(() => {
-            // set overlay shader from opaque to transparent
-            gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0 })
-
-            // css transitions to fade in
-            loadingBarElement.classList.add('ended')
-            loadingBarElement.style.transform = ''
-        },500)
-    },
-    // Progress of object
-    (itemsUrl, itemsLoaded, itemsTotal) => {
-        // console.log(itemsLoaded)
-        // console.log(itemsTotal)
-        const progressRatio = itemsLoaded / itemsTotal;
-        
-    }
-)
 
 /**
  * Overlay Shader Materials
  */
-const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1)
-const overlayMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        uAlpha: { value: 1 }
+ const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1)
+ const overlayMaterial = new THREE.ShaderMaterial({
+     uniforms: {
+         uAlpha: { value: 1 }
+     },
+     // wireframe: true,
+     transparent: true,
+     vertexShader: `
+     void main()
+     {
+         gl_Position = vec4(position, 1.0);
+     }
+     `,
+     fragmentShader: `
+     uniform float uAlpha;
+ 
+     void main()
+     {
+         gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
+     }
+     `
+ })
+ const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial)
+ scene.add(overlay)
+ 
+//  gui.add(overlayMaterial.uniforms.uAlpha, 'value').min(0).max(1).name('uAlpha')
+ 
+ /**
+  * Update all materials
+  */
+ const updateAllMaterials = () =>
+ {
+     scene.traverse((child) =>
+     {
+         if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
+         {
+             // child.material.envMap = environmentMap
+             // child.material.envMapIntensity = debugObject.envMapIntensity
+             child.material.needsUpdate = true
+             child.castShadow = true
+             child.receiveShadow = true
+         }
+     })
+ }
+/**
+ * Points/ Info bubble
+ */
+// Raycaster to detect mouse-over intersections of 3D model
+const raycaster = new Raycaster()
+const points = [
+    {
+        position: new THREE.Vector3(1.55, 0.3, - 0.6),
+        element: document.querySelector('.point-0')
     },
-    // wireframe: true,
-    transparent: true,
-    vertexShader: `
-    void main()
     {
-        gl_Position = vec4(position, 1.0);
-    }
-    `,
-    fragmentShader: `
-    uniform float uAlpha;
-
-    void main()
+        position: new THREE.Vector3(0.5, 0.8, - 1.6),
+        element: document.querySelector('.point-1')
+    },
     {
-        gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
+        position: new THREE.Vector3(1.6, - 1.3, - 0.7),
+        element: document.querySelector('.point-2')
     }
-    `
-})
-const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial)
-scene.add(overlay)
-
-gui.add(overlayMaterial.uniforms.uAlpha, 'value').min(0).max(1).name('uAlpha')
-
-/**
- * Update all materials
- */
-const updateAllMaterials = () =>
-{
-    scene.traverse((child) =>
-    {
-        if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
-        {
-            // child.material.envMap = environmentMap
-            // child.material.envMapIntensity = debugObject.envMapIntensity
-            child.material.needsUpdate = true
-            child.castShadow = true
-            child.receiveShadow = true
-        }
-    })
-}
-
-
-/**
- * Models
- */
-const gltfLoader = new GLTFLoader(loadingManager)
-const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager)
-
-let mixer = null
-
-// gltfLoader.load(
-//     '/models/Fox/glTF/Fox.gltf',
-//     (gltf) => {
-//         mixer = new THREE.AnimationMixer(gltf.scene)
-//         const action = mixer.clipAction(gltf.animations[2])
-
-//         action.play()
-
-//         console.log(gltf.scene.animations)
-
-//         gltf.scene.scale.set(0.025, 0.025, 0.025)
-//         scene.add(gltf.scene)
-//     }
-// )
-
-
-// gltfLoader.load(
-//     '/models/Duck/glTF-Draco/Duck.gltf',
-//     (gltf) => {
-//         // console.log(gltf.scene.children[0])
-//         scene.add(gltf.scene)
-//     }
-// )
-gltfLoader.load(
-    '/models/Volvo/glTF/scene.gltf',
-    (gltf) => {
-        console.log(gltf.scenes[0])
-        gltf.scenes[0].scale.set(0.25, 0.25, 0.25)
-        gltf.scenes[0].position.set(0, -0.17, 0)
-        scene.add(gltf.scenes[0])
-
-        updateAllMaterials()
-    }
-)
+]
 
 /**
  * Environment Map
@@ -155,7 +154,7 @@ environmentMap.encoding = THREE.sRGBEncoding
 scene.background = environmentMap
 scene.environment = environmentMap
 
-// Particle Materials
+// Particle Materials (snowfall)
 const particlesMaterial = new THREE.PointsMaterial()
 particlesMaterial.size = 0.02
 particlesMaterial.sizeAttenuation = true
@@ -237,7 +236,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(-3, 2, 2)
+camera.position.set(2, 1.5, -3)
 scene.add(camera)
 
 // Controls
@@ -272,6 +271,7 @@ const tick = () =>
     
     // particles.position.y = - elapsedTime * 0.2
 
+    
 
     // Update mixer
     if(mixer !== null) {
@@ -280,6 +280,7 @@ const tick = () =>
 
     // Update controls
     controls.update()
+    
 
     // Render
     renderer.render(scene, camera)
