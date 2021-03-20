@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
-import { Raycaster } from 'three'
+import { Group, Raycaster } from 'three'
 
 /**
  * Loaders
@@ -56,6 +56,7 @@ gltfLoader.load(
         updateAllMaterials()
     }
 )
+
 
 /**
  * Base
@@ -122,6 +123,19 @@ const scene = new THREE.Scene()
  */
 // Raycaster to detect mouse-over intersections of 3D model
 const raycaster = new Raycaster()
+const mouse = new THREE.Vector2()
+
+const onMouseMove = (event) => {
+
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = ( event.clientY / window.innerHeight ) * 2 + 1;
+
+}
+
+
 const points = [
     {
         position: new THREE.Vector3(1.55, 0.3, - 0.6),
@@ -136,6 +150,7 @@ const points = [
         element: document.querySelector('.point-2')
     }
 ]
+
 
 /**
  * Environment Map
@@ -261,6 +276,9 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const clock = new THREE.Clock()
 let previousTime = 0
 
+// Debugging scene
+console.log(scene.children[5])
+
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
@@ -271,6 +289,17 @@ const tick = () =>
     
     // particles.position.y = - elapsedTime * 0.2
 
+    // Update the picking ray with the camera and mouse position
+    raycaster.setFromCamera(mouse, camera)
+
+    //calculate objects intersecting the picking ray
+    const intersects = raycaster.intersectObjects(scene.children)
+
+    for(let i = 0; i < intersects.length; i++) {
+        intersects[i].object.material.color.set(0xff0000)
+    }
+
+ 
     
 
     // Update mixer
@@ -284,6 +313,9 @@ const tick = () =>
 
     // Render
     renderer.render(scene, camera)
+
+    // Event listener for mouse
+    window.addEventListener('mousemove', onMouseMove, false)
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
