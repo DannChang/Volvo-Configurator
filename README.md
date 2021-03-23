@@ -8,10 +8,10 @@ Model Credit: Dennis Andersson
 
 License: CC Attribution
 
-![image](https://user-images.githubusercontent.com/27746994/111100663-78073100-8505-11eb-8bfd-13a7c40903ab.png)
+![Screen Shot 2021-03-23 at 9 19 25 AM](https://user-images.githubusercontent.com/27746994/112180734-0b50fe00-8bb9-11eb-9d80-810db73be917.png)
 
 # Work in Progress
-- [ ] Add text points
+- [x] Add text points
 - [ ] Add 3D text hovering car object
 - [ ] Optimize model to Draco model
 - [ ] Move camera on-clicked text point
