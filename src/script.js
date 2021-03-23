@@ -72,14 +72,13 @@ const scene = new THREE.Scene()
 
 
 /**
- * Overlay Shader Materials
+ * Overlay Shader Materials for Loading Page
  */
  const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1)
  const overlayMaterial = new THREE.ShaderMaterial({
      uniforms: {
          uAlpha: { value: 1 }
      },
-     // wireframe: true,
      transparent: true,
      vertexShader: `
      void main()
@@ -99,8 +98,6 @@ const scene = new THREE.Scene()
  const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial)
  scene.add(overlay)
  
-//  gui.add(overlayMaterial.uniforms.uAlpha, 'value').min(0).max(1).name('uAlpha')
- 
  /**
   * Update all materials
   */
@@ -118,9 +115,7 @@ const scene = new THREE.Scene()
          }
      })
  }
-/**
- * Points/ Info bubble
- */
+
 // Raycaster to detect mouse-over intersections of 3D model
 const raycaster = new Raycaster()
 const mouse = new THREE.Vector2()
@@ -129,26 +124,25 @@ const onMouseMove = (event) => {
 
     // calculate mouse position in normalized device coordinates
     // (-1 to +1) for both components
-
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = ( event.clientY / window.innerHeight ) * 2 + 1;
 
 }
 
-
+// Text Points
 const points = [
     {
-        position: new THREE.Vector3(1.55, 0.3, - 0.6),
+        position: new THREE.Vector3(0, 1.5, - 1.75),
         element: document.querySelector('.point-0')
     },
-    {
-        position: new THREE.Vector3(0.5, 0.8, - 1.6),
-        element: document.querySelector('.point-1')
-    },
-    {
-        position: new THREE.Vector3(1.6, - 1.3, - 0.7),
-        element: document.querySelector('.point-2')
-    }
+    // {
+    //     position: new THREE.Vector3(0.5, 0.8, - 1.6),
+    //     element: document.querySelector('.point-1')
+    // },
+    // {
+    //     position: new THREE.Vector3(1.6, - 1.3, - 0.7),
+    //     element: document.querySelector('.point-2')
+    // }
 ]
 
 
@@ -185,26 +179,12 @@ for(let i = 0; i < count * 3; i++) // Multiply by 3 for same reason
     positions[i] = (Math.random() - 0.5) * 10 // Math.random() - 0.5 to have a random value between -0.5 and +0.5
 }
 
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)) // Create the Three.js BufferAttribute and specify that each information is composed of 3 values
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)) 
 
 // Points
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
 scene.add(particles)
 
-/**
- * Floor
- */
-// const floor = new THREE.Mesh(
-//     new THREE.PlaneGeometry(10, 10),
-//     new THREE.MeshStandardMaterial({
-//         color: '#444444',
-//         metalness: 0,
-//         roughness: 0.5
-//     })
-// )
-// floor.receiveShadow = true
-// floor.rotation.x = - Math.PI * 0.5
-// scene.add(floor)
 
 /**
  * Lights
@@ -285,8 +265,7 @@ const tick = () =>
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
 
-    // Update particles
-    
+    // // Update particles for snow effect
     // particles.position.y = - elapsedTime * 0.2
 
     // Update the picking ray with the camera and mouse position
@@ -295,12 +274,9 @@ const tick = () =>
     //calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children)
 
-    for(let i = 0; i < intersects.length; i++) {
-        intersects[i].object.material.color.set(0xff0000)
-    }
-
- 
-    
+    // for(let i = 0; i < intersects.length; i++) {
+    //     intersects[i].object.material.color.set(0xff0000)
+    // }
 
     // Update mixer
     if(mixer !== null) {
@@ -309,7 +285,16 @@ const tick = () =>
 
     // Update controls
     controls.update()
-    
+
+    // Add text points
+    for(const point of points) {
+        const screenPosition = point.position.clone()
+        screenPosition.project(camera)
+
+        const translateX = screenPosition.x * sizes.width * 0.5
+        const translateY = screenPosition.y * sizes.height * 0.5
+        point.element.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`
+    }
 
     // Render
     renderer.render(scene, camera)
