@@ -135,7 +135,7 @@ const points = [
         element: document.querySelector('.point-0')
     },
     {
-        position: new THREE.Vector3(-0.45, 0.8, 0.2),
+        position: new THREE.Vector3(-0.1, 0.8, -0.2),
         element: document.querySelector('.point-1')
     },
     {
