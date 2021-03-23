@@ -8,7 +8,8 @@ Model Credit: Dennis Andersson
 
 License: CC Attribution
 
-![Screen Shot 2021-03-23 at 9 19 25 AM](https://user-images.githubusercontent.com/27746994/112180734-0b50fe00-8bb9-11eb-9d80-810db73be917.png)
+![Screen Shot 2021-03-23 at 12 16 42 PM](https://user-images.githubusercontent.com/27746994/112205090-abb31c80-8bd1-11eb-9338-a9d061b62db8.png)
+
 ![portfolio-2](https://user-images.githubusercontent.com/27746994/112204860-65f65400-8bd1-11eb-8336-6994eb326507.gif)
 
 
