@@ -4,7 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
-import { Group, Raycaster } from 'three'
 
 /**
  * Loaders
@@ -117,7 +116,7 @@ const scene = new THREE.Scene()
  }
 
 // Raycaster to detect mouse-over intersections of 3D model
-const raycaster = new Raycaster()
+const raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
 
 const onMouseMove = (event) => {
@@ -132,17 +131,17 @@ const onMouseMove = (event) => {
 // Text Points
 const points = [
     {
-        position: new THREE.Vector3(0, 1.5, - 1.75),
+        position: new THREE.Vector3(-0.033, 0.5, - 1.75),
         element: document.querySelector('.point-0')
     },
-    // {
-    //     position: new THREE.Vector3(0.5, 0.8, - 1.6),
-    //     element: document.querySelector('.point-1')
-    // },
-    // {
-    //     position: new THREE.Vector3(1.6, - 1.3, - 0.7),
-    //     element: document.querySelector('.point-2')
-    // }
+    {
+        position: new THREE.Vector3(-0.45, 0.8, 0.2),
+        element: document.querySelector('.point-1')
+    },
+    {
+        position: new THREE.Vector3(0.8, 0.5, - 0.7),
+        element: document.querySelector('.point-2')
+    }
 ]
 
 
@@ -150,12 +149,12 @@ const points = [
  * Environment Map
  */
 const environmentMap = cubeTextureLoader.load([
-    '/textures/environments/snowy-env-map/px.png',
-    '/textures/environments/snowy-env-map/nx.png',
-    '/textures/environments/snowy-env-map/py.png',
-    '/textures/environments/snowy-env-map/ny.png',
-    '/textures/environments/snowy-env-map/pz.png',
-    '/textures/environments/snowy-env-map/nz.png',
+    '/textures/environments/snowy-envmap-2/px.png',
+    '/textures/environments/snowy-envmap-2/nx.png',
+    '/textures/environments/snowy-envmap-2/py.png',
+    '/textures/environments/snowy-envmap-2/ny.png',
+    '/textures/environments/snowy-envmap-2/pz.png',
+    '/textures/environments/snowy-envmap-2/nz.png',
 ])
 
 environmentMap.encoding = THREE.sRGBEncoding
@@ -182,8 +181,8 @@ for(let i = 0; i < count * 3; i++) // Multiply by 3 for same reason
 particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)) 
 
 // Points
-const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-scene.add(particles)
+// const particles = new THREE.Points(particlesGeometry, particlesMaterial)
+// scene.add(particles)
 
 
 /**
@@ -257,7 +256,9 @@ const clock = new THREE.Clock()
 let previousTime = 0
 
 // Debugging scene
-console.log(scene.children[5])
+console.log(scene.children)
+
+
 
 const tick = () =>
 {
@@ -267,16 +268,6 @@ const tick = () =>
 
     // // Update particles for snow effect
     // particles.position.y = - elapsedTime * 0.2
-
-    // Update the picking ray with the camera and mouse position
-    raycaster.setFromCamera(mouse, camera)
-
-    //calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects(scene.children)
-
-    // for(let i = 0; i < intersects.length; i++) {
-    //     intersects[i].object.material.color.set(0xff0000)
-    // }
 
     // Update mixer
     if(mixer !== null) {
@@ -291,8 +282,31 @@ const tick = () =>
         const screenPosition = point.position.clone()
         screenPosition.project(camera)
 
+        // Calculate objects intersecting the picking ray
+        const intersects = raycaster.intersectObjects(scene.children, true)
+
+        // if(intersects.length === 0)
+        // {
+        //     point.element.classList.add('visible')
+        // }
+        // else
+        // {
+        //     const intersectionDistance = intersects[0].distance
+        //     const pointDistance = point.position.distanceTo(camera.position)
+
+        //     if(intersectionDistance < pointDistance)
+        //     {
+        //         point.element.classList.remove('visible')
+        //     }
+        //     else
+        //     {
+        //         point.element.classList.add('visible')
+        //     }
+        // }
+
+        // Correspond screen position with mouse position
         const translateX = screenPosition.x * sizes.width * 0.5
-        const translateY = screenPosition.y * sizes.height * 0.5
+        const translateY = - screenPosition.y * sizes.height * 0.5
         point.element.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`
     }
 
