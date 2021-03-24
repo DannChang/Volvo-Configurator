@@ -18,6 +18,6 @@ License: CC Attribution
 # Work in Progress
 - [x] Add text points
 - [x] Remove snow particles for performance
-- [ ] Add 3D text hovering car object
+- [ ] Add color configuration on car body
 - [ ] Optimize model to Draco model
 - [ ] Move camera on-clicked text point
