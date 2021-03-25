@@ -47,10 +47,10 @@ let mixer = null
 gltfLoader.load(
     '/models/Volvo/glTF/scene.gltf',
     (gltf) => {
-        console.log(gltf.scenes[0])
+        console.log(gltf.scene)
         gltf.scenes[0].scale.set(0.25, 0.25, 0.25)
         gltf.scenes[0].position.set(0, -0.17, 0)
-        scene.add(gltf.scenes[0])
+        scene.add(gltf.scene)
 
         updateAllMaterials()
     }
@@ -255,10 +255,6 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const clock = new THREE.Clock()
 let previousTime = 0
 
-// Debugging scene
-console.log(scene.children)
-
-
 
 const tick = () =>
 {
@@ -309,6 +305,7 @@ const tick = () =>
         const translateY = - screenPosition.y * sizes.height * 0.5
         point.element.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`
     }
+    
 
     // Render
     renderer.render(scene, camera)
@@ -319,5 +316,6 @@ const tick = () =>
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
+
 
 tick()
