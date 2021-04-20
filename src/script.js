@@ -29,14 +29,11 @@ const loadingManager = new THREE.LoadingManager(
     },
     // Progress of object
     (itemsUrl, itemsLoaded, itemsTotal) => {
-        // console.log(itemsLoaded)
-        // console.log(itemsTotal)
         const progressRatio = itemsLoaded / itemsTotal;
         loadingBarElement.style.transform = `scaleX(${progressRatio})`
         
     }
 )
-
 
 /**
  * Model Loader
@@ -107,8 +104,6 @@ const scene = new THREE.Scene()
      {
          if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
          {
-             // child.material.envMap = environmentMap
-             // child.material.envMapIntensity = debugObject.envMapIntensity
              child.material.needsUpdate = true
              child.castShadow = true
              child.receiveShadow = true
@@ -145,7 +140,6 @@ const points = [
     }
 ]
 
-
 /**
  * Environment Map
  */
@@ -162,28 +156,6 @@ environmentMap.encoding = THREE.sRGBEncoding
 
 scene.background = environmentMap
 scene.environment = environmentMap
-
-// Particle Materials (snowfall)
-const particlesMaterial = new THREE.PointsMaterial()
-particlesMaterial.size = 0.02
-particlesMaterial.sizeAttenuation = true
-
-// Geometry
-const particlesGeometry = new THREE.BufferGeometry()
-const count = 500
-
-const positions = new Float32Array(count * 3) // Multiply by 3 because each position is composed of 3 values (x, y, z)
-
-for(let i = 0; i < count * 3; i++) // Multiply by 3 for same reason
-{
-    positions[i] = (Math.random() - 0.5) * 10 // Math.random() - 0.5 to have a random value between -0.5 and +0.5
-}
-
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)) 
-
-// Points
-// const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-// scene.add(particles)
 
 
 /**
@@ -256,15 +228,11 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const clock = new THREE.Clock()
 let previousTime = 0
 
-
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
-
-    // // Update particles for snow effect
-    // particles.position.y = - elapsedTime * 0.2
 
     // Update mixer
     if(mixer !== null) {
