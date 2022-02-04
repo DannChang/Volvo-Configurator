@@ -6,7 +6,7 @@
     <title>Volvo Configurator</title>
 </head>
 <body>
-    <canvas class="webgl"></canvas>
+    <!-- <canvas class="webgl"></canvas>
 
     <div class="loading-bar"></div>
 
@@ -21,8 +21,47 @@
     <div class="point point-2 visible">
         <div class="label">3</div>
         <div class="text">Boxy but good</div>
-    </div>
+    </div> -->
+    <!-- <model-viewer bounds="tight" src="../static/models/Volvo/glTF/scene.gltf" ar ar-modes="webxr scene-viewer quick-look" camera-controls environment-image="../static/textures/environments/aircraft_workshop_01_1k.hdr" poster="poster.webp" shadow-intensity="1" camera-orbit="115.7deg 85.56deg auto" min-camera-orbit="auto auto 24.72m" min-field-of-view="25deg" auto-rotate>
+        <button class="Hotspot" slot="hotspot-2" data-position="-0.15254956757563942m 2.886651962820044m -7.259000778198242m" data-normal="0m -2.220446049250313e-16m 1m" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Built to last</div>
+        </button><button class="Hotspot" slot="hotspot-4" data-position="-3.0499618837117097m 1.8399469675727087m 5.983691992190895m" data-normal="-0.9885475943295201m 0.019737709313862088m 0.1496130895889805m" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Rear-wheel Drive</div>
+        </button><button class="Hotspot" slot="hotspot-5" data-position="-2.834670989180612m 4.355108446584628m -0.1565568871460048m" data-normal="-0.964921312520184m 0.26236634606763204m 0.009526861783665127m" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Budget drift missile</div>
+        </button>
+        <div class="progress-bar hide" slot="progress-bar">
+            <div class="update-bar"></div>
+        </div>
+        <button slot="ar-button" id="ar-button">
+            View in your space
+        </button>
+        <div id="ar-prompt">
+            <img src="https://modelviewer.dev/shared-assets/icons/hand.png">
+        </div>
+    </model-viewer> -->
+    <model-viewer bounds="tight" src="../static/models/Volvo/glTF/scene.gltf" ar ar-modes="webxr scene-viewer quick-look" camera-controls environment-image="../static/textures/environments/aircraft_workshop_01_1k.hdr" poster="poster.webp" shadow-intensity="1" camera-orbit="115.7deg 85.56deg auto" min-camera-orbit="auto auto 24.72m" min-field-of-view="25deg" auto-rotate>
+        <button class="Hotspot" slot="hotspot-2" data-position="-0.15254956757563942m 2.886651962820044m -7.259000778198242m" data-normal="0m -2.220446049250313e-16m 1m" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Built to last</div>
+        </button><button class="Hotspot" slot="hotspot-4" data-position="-3.0499618837117097m 1.8399469675727087m 5.983691992190895m" data-normal="-0.9885475943295201m 0.019737709313862088m 0.1496130895889805m" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Rear-wheel Drive</div>
+        </button><button class="Hotspot" slot="hotspot-5" data-position="-2.834670989180612m 4.355108446584628m -0.1565568871460048m" data-normal="-0.964921312520184m 0.26236634606763204m 0.009526861783665127m" data-visibility-attribute="visible">
+            <div class="HotspotAnnotation">Budget drift missile</div>
+        </button>
+        <div class="progress-bar hide" slot="progress-bar">
+            <div class="update-bar"></div>
+        </div>
+        <button slot="ar-button" id="ar-button">
+            View in your space
+        </button>
+        <div id="ar-prompt">
+            <img src="https://modelviewer.dev/shared-assets/icons/hand.png">
+        </div>
+    </model-viewer>
+    
 
-
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script nomodule="" src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js">
+    </script>
 </body>
 </html>
